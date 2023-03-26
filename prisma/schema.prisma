@@ -8,13 +8,14 @@ generator client {
 }
 
 model User {
-    id        Int      @id @default(autoincrement())
-    username  String   @unique
-    email     String   @unique
+    id        Int       @id @default(autoincrement())
+    username  String    @unique
+    email     String    @unique
     password  String
     birthdate String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
 
     role Role @default(USER)
 
