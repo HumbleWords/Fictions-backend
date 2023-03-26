@@ -9,23 +9,22 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Prisma } from '@prisma/client';
-import { CreateUserDto, FindAllDto, UpdateUserDto } from './users.dto';
+import { CreateUserDto, FindAllUsersDto, UpdateUserDto } from './users.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  async findAll(
+  async getAll(
     @Body()
-    params: FindAllDto,
+    params: FindAllUsersDto,
   ) {
     return await this.usersService.getAll(params);
   }
 
   @Get(':id')
-  async findById(@Param('id', ParseIntPipe) id: number) {
+  async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.usersService.getById(id);
   }
 

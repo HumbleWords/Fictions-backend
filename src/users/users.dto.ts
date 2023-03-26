@@ -1,4 +1,4 @@
-export class FindAllDto {
+export class FindAllUsersDto {
   skip: number;
   take: number;
   where: { username: string };

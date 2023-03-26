@@ -98,7 +98,7 @@ enum Category {
 
 model Tag {
     id   Int    @id @default(autoincrement())
-    name String
+    name String @unique
 
     works Work[]
     users User[] @relation("FavoriteTags")
@@ -106,7 +106,7 @@ model Tag {
 
 model Fandom {
     id   Int    @id @default(autoincrement())
-    name String
+    name String @unique
 
     works Work[]
     users User[] @relation("FavoriteFandoms")
