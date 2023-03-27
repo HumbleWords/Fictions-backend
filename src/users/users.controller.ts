@@ -14,7 +14,9 @@ import { CreateUserDto, FindAllUsersDto, UpdateUserDto } from './users.dto';
 import { Public } from 'src/common/public.decorator';
 import { Roles } from 'src/common/role.decorator';
 import { Role } from 'src/common/role.enum';
+import { ApiTags } from '@nestjs/swagger/dist/decorators';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}

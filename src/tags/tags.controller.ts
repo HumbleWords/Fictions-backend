@@ -8,10 +8,12 @@ import {
   Put,
   Post,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger/dist/decorators';
 import { Public } from 'src/common/public.decorator';
 import { CreateTagDto, FindAllTagsDto, UpdateTagDto } from './tags.dto';
 import { TagsService } from './tags.service';
 
+@ApiTags('Tags')
 @Controller('tags')
 export class TagsController {
   constructor(private tagsService: TagsService) {}

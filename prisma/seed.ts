@@ -11,6 +11,14 @@ const ADMIN_USER_DATA: Prisma.UserCreateInput = {
   role: Role.ADMIN,
 };
 
+const REG_USER_DATA: Prisma.UserCreateInput = {
+  username: 'RegUser',
+  email: 'reguser@example.mail',
+  password: 'reguser123',
+  birthdate: '2003-03-31',
+  role: Role.USER,
+};
+
 const main = async () => {
   const users_deleted = await prisma.user.deleteMany();
   console.log({ users_deleted });
@@ -26,7 +34,18 @@ const main = async () => {
       role: ADMIN_USER_DATA.role,
     },
   });
-  console.log({ adminUser });
+  const regUser = await prisma.user.upsert({
+    where: { email: REG_USER_DATA.email },
+    update: {},
+    create: {
+      username: REG_USER_DATA.username,
+      email: REG_USER_DATA.email,
+      password: await hash(REG_USER_DATA.password, 10),
+      birthdate: REG_USER_DATA.birthdate,
+      role: REG_USER_DATA.role,
+    },
+  });
+  console.log({ adminUser, regUser });
 };
 main()
   .then(async () => {

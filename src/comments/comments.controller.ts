@@ -8,6 +8,7 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger/dist';
 import { Public } from 'src/common/public.decorator';
 import {
   FindAllCommentsDto,
@@ -16,6 +17,7 @@ import {
 } from './comments.dto';
 import { CommentsService } from './comments.service';
 
+@ApiTags('Comments')
 @Controller('comments')
 export class CommentsController {
   constructor(private commentsService: CommentsService) {}

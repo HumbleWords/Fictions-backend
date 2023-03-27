@@ -9,10 +9,12 @@ import {
   Post,
   Request,
 } from '@nestjs/common/decorators';
+import { ApiTags } from '@nestjs/swagger/dist/decorators';
 import { Public } from 'src/common/public.decorator';
 import { CreateWorkDto, FindAllWorksDto, UpdateWorkDto } from './works.dto';
 import { WorksService } from './works.service';
 
+@ApiTags('Works')
 @Controller('works')
 export class WorksController {
   constructor(private worksService: WorksService) {}

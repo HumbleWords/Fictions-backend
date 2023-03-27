@@ -8,6 +8,7 @@ import {
   Put,
   Post,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger/dist/decorators';
 import { Public } from 'src/common/public.decorator';
 import {
   FindAllFandomsDto,
@@ -16,6 +17,7 @@ import {
 } from './fandoms.dto';
 import { FandomsService } from './fandoms.service';
 
+@ApiTags('Fandoms')
 @Controller('fandoms')
 export class FandomsController {
   constructor(private fandomsService: FandomsService) {}

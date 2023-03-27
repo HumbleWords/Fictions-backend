@@ -9,6 +9,7 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger/dist/decorators';
 import {
   FindAllWorkPartsDto,
   CreateWorkPartDto,
@@ -16,6 +17,7 @@ import {
 } from './workparts.dto';
 import { WorkPartsService } from './workparts.service';
 
+@ApiTags('Work Parts')
 @Controller('workparts')
 export class WorkPartsController {
   constructor(private workPartsService: WorkPartsService) {}
