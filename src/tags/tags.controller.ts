@@ -5,9 +5,10 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
+  Put,
   Post,
 } from '@nestjs/common';
+import { Public } from 'src/common/public.decorator';
 import { CreateTagDto, FindAllTagsDto, UpdateTagDto } from './tags.dto';
 import { TagsService } from './tags.service';
 
@@ -15,31 +16,48 @@ import { TagsService } from './tags.service';
 export class TagsController {
   constructor(private tagsService: TagsService) {}
 
+  @Public()
   @Get()
   async getAll(@Body() params: FindAllTagsDto) {
-    return await this.tagsService.getAll(params);
+    return {
+      success: true,
+      data: await this.tagsService.getAll(params),
+    };
   }
 
+  @Public()
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
-    return await this.tagsService.getById(id);
+    return {
+      success: true,
+      data: await this.tagsService.getById(id),
+    };
   }
 
   @Post()
   async create(@Body() data: CreateTagDto) {
-    return await this.tagsService.create(data);
+    return {
+      success: true,
+      data: await this.tagsService.create(data),
+    };
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: UpdateTagDto,
   ) {
-    return await this.tagsService.update(id, data);
+    return {
+      success: true,
+      data: await this.tagsService.update(id, data),
+    };
   }
 
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number) {
-    return await this.tagsService.delete(id);
+    return {
+      success: true,
+      data: await this.tagsService.delete(id),
+    };
   }
 }

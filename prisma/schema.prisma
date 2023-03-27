@@ -37,7 +37,7 @@ model Work {
     id          Int      @id @default(autoincrement())
     title       String
     description String
-    note        String
+    note        String?
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
@@ -113,11 +113,12 @@ model Fandom {
 }
 
 model WorkPart {
-    id          Int     @id @default(autoincrement())
+    id          Int        @id @default(autoincrement())
     title       String?
     description String?
     note        String?
     text        String
+    status      WorkStatus @default(DRAFT)
 
     workId Int
     work   Work @relation(fields: [workId], references: [id])
@@ -133,6 +134,7 @@ model Comment {
     id        Int      @id @default(autoincrement())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    text      String
 
     userId Int
     user   User @relation("CommentAuthor", fields: [userId], references: [id])

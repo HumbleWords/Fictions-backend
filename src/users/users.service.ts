@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Prisma, User } from '@prisma/client';
+import { PublicUserInfo } from './users.dto';
 
 @Injectable()
 export class UsersService {
@@ -11,17 +12,43 @@ export class UsersService {
     take: number;
     where: Prisma.UserWhereInput;
     orderBy: Prisma.Enumerable<Prisma.UserOrderByWithRelationInput>;
-  }): Promise<User[]> {
-    const users = this.prisma.user.findMany({ ...params });
+  }): Promise<PublicUserInfo[]> {
+    const users = this.prisma.user.findMany({
+      ...params,
+      select: {
+        id: true,
+        username: true,
+      },
+    });
     return users;
   }
 
-  async getById(id: number): Promise<User> {
+  async getById(id: number): Promise<PublicUserInfo> {
     const user = this.prisma.user.findUnique({
       where: {
         id,
       },
+      select: {
+        id: true,
+        username: true,
+      },
     });
+    return user;
+  }
+
+  async getByUsername(username: string): Promise<PublicUserInfo> {
+    const user = this.prisma.user.findUnique({
+      where: { username },
+      select: {
+        id: true,
+        username: true,
+      },
+    });
+    return user;
+  }
+
+  async getByUsernameWithPassword(username: string): Promise<User> {
+    const user = this.prisma.user.findUnique({ where: { username } });
     return user;
   }
 

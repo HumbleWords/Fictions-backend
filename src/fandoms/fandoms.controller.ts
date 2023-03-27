@@ -5,9 +5,10 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
+  Put,
   Post,
 } from '@nestjs/common';
+import { Public } from 'src/common/public.decorator';
 import {
   FindAllFandomsDto,
   CreateFandomDto,
@@ -19,31 +20,48 @@ import { FandomsService } from './fandoms.service';
 export class FandomsController {
   constructor(private fandomsService: FandomsService) {}
 
+  @Public()
   @Get()
   async getAll(@Body() params: FindAllFandomsDto) {
-    return await this.fandomsService.getAll(params);
+    return {
+      success: true,
+      data: await this.fandomsService.getAll(params),
+    };
   }
 
+  @Public()
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
-    return await this.fandomsService.getById(id);
+    return {
+      success: true,
+      data: await this.fandomsService.getById(id),
+    };
   }
 
   @Post()
   async create(@Body() data: CreateFandomDto) {
-    return await this.fandomsService.create(data);
+    return {
+      success: true,
+      data: await this.fandomsService.create(data),
+    };
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: UpdateFandomDto,
   ) {
-    return await this.fandomsService.update(id, data);
+    return {
+      success: true,
+      data: await this.fandomsService.update(id, data),
+    };
   }
 
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number) {
-    return await this.fandomsService.delete(id);
+    return {
+      success: true,
+      data: await this.fandomsService.delete(id),
+    };
   }
 }

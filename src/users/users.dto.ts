@@ -22,3 +22,8 @@ export class UpdateUserDto {
   birthdate: string;
   role: 'USER' | 'ADMIN';
 }
+
+export class PublicUserInfo {
+  id: number
+  username: string
+}
