@@ -8,7 +8,7 @@ import {
   Put,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger/dist/decorators';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger/dist/decorators';
 import { Public } from 'src/common/public.decorator';
 import {
   FindAllFandomsDto,
@@ -17,13 +17,14 @@ import {
 } from './fandoms.dto';
 import { FandomsService } from './fandoms.service';
 
+@ApiBearerAuth("access_token")
 @ApiTags('Fandoms')
 @Controller('fandoms')
 export class FandomsController {
   constructor(private fandomsService: FandomsService) {}
 
   @Public()
-  @Get()
+  @Post()
   async getAll(@Body() params: FindAllFandomsDto) {
     return {
       success: true,
@@ -40,7 +41,7 @@ export class FandomsController {
     };
   }
 
-  @Post()
+  @Post('new')
   async create(@Body() data: CreateFandomDto) {
     return {
       success: true,

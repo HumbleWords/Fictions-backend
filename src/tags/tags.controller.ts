@@ -8,18 +8,19 @@ import {
   Put,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger/dist/decorators';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger/dist/decorators';
 import { Public } from 'src/common/public.decorator';
 import { CreateTagDto, FindAllTagsDto, UpdateTagDto } from './tags.dto';
 import { TagsService } from './tags.service';
 
+@ApiBearerAuth("access_token")
 @ApiTags('Tags')
 @Controller('tags')
 export class TagsController {
   constructor(private tagsService: TagsService) {}
 
   @Public()
-  @Get()
+  @Post()
   async getAll(@Body() params: FindAllTagsDto) {
     return {
       success: true,
@@ -36,7 +37,7 @@ export class TagsController {
     };
   }
 
-  @Post()
+  @Post('new')
   async create(@Body() data: CreateTagDto) {
     return {
       success: true,

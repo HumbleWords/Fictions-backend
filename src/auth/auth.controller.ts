@@ -1,12 +1,10 @@
 import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger/dist';
-import { ApiBearerAuth } from '@nestjs/swagger/dist/decorators';
+import { ApiOperation, ApiTags } from '@nestjs/swagger/dist';
 import { LocalAuthGuard } from 'src/common/local-auth.guard';
 import { Public } from 'src/common/public.decorator';
 import { LoginDto, RegisterDto } from './auth.dto';
 import { AuthService } from './auth.service';
 
-@ApiBearerAuth()
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -14,6 +12,9 @@ export class AuthController {
 
   @Public()
   @UseGuards(LocalAuthGuard)
+  @ApiOperation({
+    summary: 'Login to the system',
+  })
   @Post('login')
   async login(@Request() req, @Body() data: LoginDto) {
     return {
@@ -23,6 +24,9 @@ export class AuthController {
   }
 
   @Public()
+  @ApiOperation({
+    summary: 'Register a new user',
+  })
   @Post('register')
   async register(@Body() body: RegisterDto) {
     return {

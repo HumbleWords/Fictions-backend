@@ -1,3 +1,5 @@
+import { StatusEnum } from 'src/common/common.dto';
+
 export class FindAllWorkPartsDto {
   skip: number;
   take: number;
@@ -6,6 +8,20 @@ export class FindAllWorkPartsDto {
   };
   orderBy: {
     order: 'asc' | 'desc';
+  };
+}
+
+export class CreateWorkPartProcessedDto {
+  title: string | null;
+  description?: string | null;
+  note?: string | null;
+  text: string;
+  order: number;
+  status: 'DRAFT' | 'PUBLISHED' | 'HIDDEN';
+  work: {
+    connect: {
+      id: number;
+    };
   };
 }
 
@@ -23,11 +39,20 @@ export class CreateWorkPartDto {
   };
 }
 
+export class UpdateWorkPartProcessedDto {
+  title: string | null;
+  description?: string | null;
+  note?: string | null;
+  text: string;
+  order: number;
+  status: StatusEnum;
+}
+
 export class UpdateWorkPartDto {
   title: string | null;
   description?: string | null;
   note?: string | null;
   text: string;
   order: number;
-  status: 'DRAFT' | 'PUBLISHED' | 'HIDDEN';
+  status: StatusEnum;
 }

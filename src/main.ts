@@ -19,7 +19,10 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Fictions API')
-    .setDescription('Fictions API')
+    .setDescription(
+      `Fictions API</br>
+    [GitHub Repository](https://github.com/HumbleWords/Fictions-backend/tree/dev)`,
+    )
     .setVersion('1.0')
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },

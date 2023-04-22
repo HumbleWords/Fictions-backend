@@ -9,18 +9,25 @@ import {
   Post,
   Request,
 } from '@nestjs/common/decorators';
-import { ApiTags } from '@nestjs/swagger/dist/decorators';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger/dist/decorators';
 import { Public } from 'src/common/public.decorator';
-import { CreateWorkDto, FindAllWorksDto, UpdateWorkDto } from './works.dto';
+import {
+  CreateWorkDto,
+  CreateWorkProcessedDto,
+  FindAllWorksDto,
+  UpdateWorkDto,
+  UpdateWorkProcessedDto,
+} from './works.dto';
 import { WorksService } from './works.service';
 
+@ApiBearerAuth('access_token')
 @ApiTags('Works')
 @Controller('works')
 export class WorksController {
   constructor(private worksService: WorksService) {}
 
   @Public()
-  @Get()
+  @Post()
   async getAll(@Body() params: FindAllWorksDto) {
     return {
       success: true,
@@ -45,13 +52,28 @@ export class WorksController {
     };
   }
 
-  @Post()
+  @Post('new')
   async create(@Request() req, @Body() data: CreateWorkDto) {
+    const processedData: CreateWorkProcessedDto = {
+      title: data.title,
+      description: data.description,
+      note: data.note,
+      status: data.status,
+      lang: data.lang,
+      rating: data.rating,
+      category: data.category,
+      tags: {
+        connect: data.tags,
+      },
+      fandoms: {
+        connect: data.fandoms,
+      },
+    };
     return {
       success: true,
       data: await this.worksService.create({
         author: { connect: { id: req.user.id } },
-        ...data,
+        ...processedData,
       }),
     };
   }
@@ -62,9 +84,24 @@ export class WorksController {
     @Request() req,
     @Body() data: UpdateWorkDto,
   ) {
+    const processedData: UpdateWorkProcessedDto = {
+      title: data.title,
+      description: data.description,
+      note: data.note,
+      status: data.status,
+      lang: data.lang,
+      rating: data.rating,
+      category: data.category,
+      tags: {
+        connect: data.tags,
+      },
+      fandoms: {
+        connect: data.fandoms,
+      },
+    };
     return {
       success: true,
-      data: await this.worksService.update(id, data, req.user.id),
+      data: await this.worksService.update(id, processedData, req.user.id),
     };
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Prisma, Comment } from '@prisma/client';
 
@@ -26,12 +26,24 @@ export class CommentsService {
     return comment;
   }
 
-  async update(id: number, data: Prisma.CommentUpdateInput): Promise<Comment> {
+  async update(id: number, data: Prisma.CommentUpdateInput, userId): Promise<Comment> {
+    const commentCheck = await this.prisma.comment.findUnique({
+      where: { id },
+    });
+    if (!(commentCheck.userId === userId)) {
+      throw new ForbiddenException();
+    }
     const comment = this.prisma.comment.update({ where: { id }, data });
     return comment;
   }
 
-  async delete(id: number): Promise<Comment> {
+  async delete(id: number, userId: number): Promise<Comment> {
+    const commentCheck = await this.prisma.comment.findUnique({
+      where: { id },
+    });
+    if (!(commentCheck.userId === userId)) {
+      throw new ForbiddenException();
+    }
     const comment = this.prisma.comment.delete({ where: { id } });
     return comment;
   }

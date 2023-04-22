@@ -9,7 +9,7 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger/dist/decorators';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger/dist/decorators';
 import {
   FindAllWorkPartsDto,
   CreateWorkPartDto,
@@ -17,12 +17,13 @@ import {
 } from './workparts.dto';
 import { WorkPartsService } from './workparts.service';
 
+@ApiBearerAuth("access_token")
 @ApiTags('Work Parts')
 @Controller('workparts')
 export class WorkPartsController {
   constructor(private workPartsService: WorkPartsService) {}
 
-  @Get()
+  @Post()
   async getAll(@Body() params: FindAllWorkPartsDto) {
     return await this.workPartsService.getAll(params);
   }
@@ -32,7 +33,7 @@ export class WorkPartsController {
     return await this.workPartsService.getById(id);
   }
 
-  @Post()
+  @Post('new')
   async create(@Request() req, @Body() data: CreateWorkPartDto) {
     return await this.workPartsService.create(req.user.id, data);
   }
