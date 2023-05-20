@@ -17,10 +17,7 @@ export class AuthController {
   })
   @Post('login')
   async login(@Request() req, @Body() data: LoginDto) {
-    return {
-      success: true,
-      data: await this.authService.login(req.user),
-    };
+    return await this.authService.login(req.user);
   }
 
   @Public()
@@ -29,9 +26,6 @@ export class AuthController {
   })
   @Post('register')
   async register(@Body() body: RegisterDto) {
-    return {
-      success: true,
-      data: await this.authService.register(body),
-    };
+    return await this.authService.register(body);
   }
 }

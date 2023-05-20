@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ConnectRecordDto, StatusEnum } from 'src/common/common.dto';
+import { Transform } from 'class-transformer';
+import { IsInt } from 'class-validator';
+import { ConnectRecordDto, OrderByEnum, StatusEnum } from 'src/common/common.dto';
 
 enum LangEnum {
   zh_ch = 'zh_ch',
@@ -35,6 +37,27 @@ enum CategoryEnum {
 }
 
 export class FindAllWorksDto {
+  @ApiProperty({default: 0})
+  @IsInt()
+  @Transform(({value}) => Number(value))
+  skip: number;
+  @ApiProperty({default: 20})
+  @IsInt()
+  @Transform(({value}) => Number(value))
+  take: number;
+  @ApiProperty({type: String, default: '', required: false})
+  title: string | null;
+  @ApiProperty({type: String, default: '', required: false})
+  author: string | null;
+  @ApiProperty({type: String, default: '', required: false})
+  tags: string | null;
+  @ApiProperty({type: String, default: '', required: false})
+  fandoms: string | null;
+  @ApiProperty({ enum: OrderByEnum })
+  orderBy: OrderByEnum;
+}
+
+export class FindAllWorksProcessedDto {
   skip: number;
   take: number;
   where: {

@@ -13,7 +13,9 @@ export class WorksService {
     orderBy: Prisma.Enumerable<Prisma.WorkOrderByWithRelationInput>;
   }): Promise<Work[]> {
     params.where = { ...params.where, status: 'PUBLISHED' };
+    console.log(JSON.stringify({params}))
     const works = this.prisma.work.findMany({ ...params });
+    console.log(await (works))
     return works;
   }
 
@@ -27,6 +29,7 @@ export class WorksService {
     userId: number,
   ) {
     params.where = { ...params.where, authorId: userId };
+    console.log(JSON.stringify({params, userId}))
     const works = this.prisma.work.findMany({ ...params });
     return works;
   }

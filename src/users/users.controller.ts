@@ -8,6 +8,7 @@ import {
   Delete,
   ParseIntPipe,
   Request,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -32,26 +33,35 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Public()
-  @Post()
+  @ApiOperation({
+    summary: 'Get list of users',
+  })
+  @Get()
   async getAll(
-    @Body()
+    @Query()
     params: FindAllUsersDto,
   ) {
     const processedParams: FindAllUsersProcessedDto = {
       skip: params.skip,
       take: params.take,
-      orderBy: params.orderBy,
+      orderBy: { username: params.orderBy },
       where: {
         username: {
-          contains: params.where.username,
+          contains: params.where,
           mode: 'insensitive',
         },
       },
     };
-    return {
-      success: true,
-      data: await this.usersService.getAll(processedParams),
-    };
+    return await this.usersService.getAll(processedParams);
+  }
+
+  @Roles(Role.Admin)
+  @ApiOperation({
+    summary: 'Create new user',
+  })
+  @Post()
+  async create(@Body() data: CreateUserDto) {
+    return await this.usersService.create(data);
   }
 
   @ApiOperation({
@@ -59,10 +69,7 @@ export class UsersController {
   })
   @Get('me')
   async getMe(@Request() req) {
-    return {
-      success: true,
-      data: await this.usersService.getById(req.user.id),
-    };
+    return await this.usersService.getById(req.user.id);
   }
 
   @Public()
@@ -71,22 +78,7 @@ export class UsersController {
   })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
-    return {
-      success: true,
-      data: await this.usersService.getById(id),
-    };
-  }
-
-  @Roles(Role.Admin)
-  @ApiOperation({
-    summary: 'Create new user',
-  })
-  @Post('new')
-  async create(@Body() data: CreateUserDto) {
-    return {
-      success: true,
-      data: await this.usersService.create(data),
-    };
+    return await this.usersService.getById(id);
   }
 
   @Roles(Role.Admin)
@@ -98,10 +90,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() data: UpdateUserDto,
   ) {
-    return {
-      success: true,
-      data: await this.usersService.update(id, data),
-    };
+    return await this.usersService.update(id, data);
   }
 
   @Roles(Role.Admin)
@@ -110,10 +99,7 @@ export class UsersController {
   })
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number) {
-    return {
-      success: true,
-      data: await this.usersService.delete(id),
-    };
+    return await this.usersService.delete(id);
   }
 
   @ApiOperation({
@@ -121,9 +107,6 @@ export class UsersController {
   })
   @Put('me')
   async updateMe(@Request() req, @Body() data: UpdateUserDto) {
-    return {
-      success: true,
-      data: await this.usersService.update(req.user.id, data),
-    };
+    return await this.usersService.update(req.user.id, data);
   }
 }

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsEmail, IsString, Length, Matches } from 'class-validator';
 
 export class LoginDto {
   @ApiProperty({ default: 'RegUser' })
@@ -8,11 +9,21 @@ export class LoginDto {
 }
 
 export class RegisterDto {
-  @ApiProperty({ default: 'NewUser' })
+  @ApiProperty({ default: 'NewUserName' })
+  @IsString()
+  @Length(8, 64)
   username: string;
   @ApiProperty({ default: 'newuser@example.mail' })
+  @IsEmail()
   email: string;
-  @ApiProperty({ default: 'newuser123' })
+  @ApiProperty({ default: 'Riddle@MeThis123' })
+  @Length(8, 64)
+  @Matches(
+    /(?=.*\d)(?=.*\W+)(?=.*[ -\/:-@\[-\`{-~]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+    {
+      message: 'password too weak',
+    },
+  )
   password: string;
   @ApiProperty({ default: '2003-03-31' })
   birthdate: string;

@@ -13,6 +13,7 @@ export class UsersService {
     where: Prisma.UserWhereInput;
     orderBy: Prisma.Enumerable<Prisma.UserOrderByWithRelationInput>;
   }): Promise<PublicUserInfo[]> {
+    console.log(JSON.stringify({params}))
     const users = this.prisma.user.findMany({
       ...params,
       select: {
