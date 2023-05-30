@@ -7,13 +7,15 @@ export class WorkPartsService {
   constructor(private prisma: PrismaService) {}
 
   async getAll(params: {
-    skip: number;
-    take: number;
     where: Prisma.WorkPartWhereInput;
-    orderBy: Prisma.Enumerable<Prisma.WorkPartOrderByWithRelationInput>;
   }): Promise<WorkPart[]> {
     params.where = { ...params.where, status: 'PUBLISHED' };
-    const workParts = this.prisma.workPart.findMany({ ...params });
+    const workParts = this.prisma.workPart.findMany({
+      ...params,
+      orderBy: {
+        order: 'asc',
+      },
+    });
     return workParts;
   }
 
@@ -43,7 +45,7 @@ export class WorkPartsService {
     userId: number,
   ): Promise<WorkPart> {
     const checkWork = await this.prisma.work.findUnique({
-      where: { id: data.work.connect.id },
+      where: { id },
     });
     if (!(checkWork.authorId == userId)) {
       throw new ForbiddenException();

@@ -17,6 +17,8 @@ import {
   CreateWorkProcessedDto,
   FindAllWorksDto,
   FindAllWorksProcessedDto,
+  FindMyWorksDto,
+  FindMyWorksProcessedDto,
   UpdateWorkDto,
   UpdateWorkProcessedDto,
 } from './works.dto';
@@ -88,15 +90,12 @@ export class WorksController {
   }
 
   @Get('myworks')
-  async getMyWorks(@Request() req, @Query() params: FindAllWorksDto) {
-    const processedParams: FindAllWorksProcessedDto = {
+  async getMyWorks(@Request() req, @Query() params: FindMyWorksDto) {
+    const processedParams: FindMyWorksProcessedDto = {
       skip: params.skip,
       take: params.take,
       where: {
         title: params.title,
-        author: {
-          username: params.author,
-        },
         tags: {
           some: {
             name: params.tags,

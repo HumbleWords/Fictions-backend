@@ -13,9 +13,15 @@ export class WorksService {
     orderBy: Prisma.Enumerable<Prisma.WorkOrderByWithRelationInput>;
   }): Promise<Work[]> {
     params.where = { ...params.where, status: 'PUBLISHED' };
-    console.log(JSON.stringify({params}))
-    const works = this.prisma.work.findMany({ ...params });
-    console.log(await (works))
+    console.log(JSON.stringify({ params }));
+    const works = this.prisma.work.findMany({
+      ...params,
+      include: {
+        tags: true,
+        fandoms: true,
+      },
+    });
+    console.log(await works);
     return works;
   }
 
@@ -29,13 +35,36 @@ export class WorksService {
     userId: number,
   ) {
     params.where = { ...params.where, authorId: userId };
-    console.log(JSON.stringify({params, userId}))
-    const works = this.prisma.work.findMany({ ...params });
+    const works = this.prisma.work.findMany({
+      ...params,
+      include: {
+        tags: true,
+        fandoms: true,
+      },
+    });
     return works;
   }
 
   async getById(id: number): Promise<Work> {
-    const work = this.prisma.work.findUnique({ where: { id } });
+    const work = this.prisma.work.findUnique({
+      where: { id },
+      include: {
+        tags: true,
+        fandoms: true,
+        parts: {
+          select: {
+            id: true,
+            title: true,
+          },
+          orderBy: {
+            order: 'asc',
+          },
+          where: {
+            status: 'PUBLISHED',
+          },
+        },
+      },
+    });
     if (!((await work).status === 'PUBLISHED')) {
       return null;
     }
@@ -56,6 +85,10 @@ export class WorksService {
     if (!(checkWork.authorId == userId)) {
       throw new ForbiddenException();
     }
+    await this.prisma.work.update({
+      where: { id },
+      data: { tags: { set: [] }, fandoms: { set: [] } },
+    });
     const work = this.prisma.work.update({ where: { id }, data });
     return work;
   }

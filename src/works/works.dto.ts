@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsInt } from 'class-validator';
-import { ConnectRecordDto, OrderByEnum, StatusEnum } from 'src/common/common.dto';
+import {
+  ConnectRecordDto,
+  OrderByEnum,
+  StatusEnum,
+} from 'src/common/common.dto';
 
 enum LangEnum {
   zh_ch = 'zh_ch',
@@ -37,21 +41,21 @@ enum CategoryEnum {
 }
 
 export class FindAllWorksDto {
-  @ApiProperty({default: 0})
+  @ApiProperty({ default: 0 })
   @IsInt()
-  @Transform(({value}) => Number(value))
+  @Transform(({ value }) => Number(value))
   skip: number;
-  @ApiProperty({default: 20})
+  @ApiProperty({ default: 20 })
   @IsInt()
-  @Transform(({value}) => Number(value))
+  @Transform(({ value }) => Number(value))
   take: number;
-  @ApiProperty({type: String, default: '', required: false})
+  @ApiProperty({ type: String, default: '', required: false })
   title: string | null;
-  @ApiProperty({type: String, default: '', required: false})
+  @ApiProperty({ type: String, default: '', required: false })
   author: string | null;
-  @ApiProperty({type: String, default: '', required: false})
+  @ApiProperty({ type: String, default: '', required: false })
   tags: string | null;
-  @ApiProperty({type: String, default: '', required: false})
+  @ApiProperty({ type: String, default: '', required: false })
   fandoms: string | null;
   @ApiProperty({ enum: OrderByEnum })
   orderBy: OrderByEnum;
@@ -73,6 +77,46 @@ export class FindAllWorksProcessedDto {
     fandoms: {
       some: {
         name: string | null;
+      };
+    };
+  };
+  orderBy: {
+    title: 'asc' | 'desc';
+  };
+}
+
+export class FindMyWorksDto {
+  @ApiProperty({ default: 0 })
+  @IsInt()
+  @Transform(({ value }) => Number(value))
+  skip: number;
+  @ApiProperty({ default: 20 })
+  @IsInt()
+  @Transform(({ value }) => Number(value))
+  take: number;
+  @ApiProperty({ type: String, default: '', required: false })
+  title: string | null;
+  @ApiProperty({ type: String, default: '', required: false })
+  tags: string | undefined;
+  @ApiProperty({ type: String, default: '', required: false })
+  fandoms: string | undefined;
+  @ApiProperty({ enum: OrderByEnum })
+  orderBy: OrderByEnum;
+}
+
+export class FindMyWorksProcessedDto {
+  skip: number;
+  take: number;
+  where: {
+    title: string | null;
+    tags: {
+      some: {
+        name: string | undefined;
+      };
+    };
+    fandoms: {
+      some: {
+        name: string | undefined;
       };
     };
   };
@@ -135,11 +179,11 @@ export class CreateWorkDto {
     default: null,
   })
   category: CategoryEnum | null;
-  @ApiProperty({ type: [ConnectRecordDto], default: [] })
+  @ApiProperty({ type: [ConnectRecordDto], default: [{ id: 1 }] })
   tags: {
     id: number;
   }[];
-  @ApiProperty({ type: [ConnectRecordDto], default: [] })
+  @ApiProperty({ type: [ConnectRecordDto], default: [{ id: 1 }] })
   fandoms: {
     id: number;
   }[];

@@ -4,23 +4,6 @@ import { IsInt, IsEmail, IsString, Length, Matches } from 'class-validator';
 import { OrderByEnum } from 'src/common/common.dto';
 import { Role } from 'src/common/role.enum';
 
-class UsersWhere {
-  @ApiProperty({ type: String, default: '', required: false })
-  username: string;
-}
-
-class UsersWhereProcessed {
-  @ApiProperty({ type: UsersWhere })
-  username: UsersWhere;
-  @ApiProperty({ type: String })
-  mode: 'insensitive';
-}
-
-class UsersOrderBy {
-  @ApiProperty({ enum: OrderByEnum })
-  username: OrderByEnum;
-}
-
 export class FindAllUsersDto {
   @ApiProperty({ default: 0 })
   @IsInt()
@@ -37,13 +20,9 @@ export class FindAllUsersDto {
 }
 
 export class FindAllUsersProcessedDto {
-  @ApiProperty({ default: 0 })
   skip: number;
-  @ApiProperty({ default: 20 })
   take: number;
-  @ApiProperty({ type: UsersWhereProcessed })
   where: { username: { contains: string; mode: 'insensitive' } };
-  @ApiProperty({ type: UsersOrderBy })
   orderBy: {
     username: 'asc' | 'desc';
   };
