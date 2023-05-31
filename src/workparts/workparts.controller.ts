@@ -20,13 +20,14 @@ import {
   CreateWorkPartProcessedDto,
 } from './workparts.dto';
 import { WorkPartsService } from './workparts.service';
+import { Public } from 'src/common/public.decorator';
 
-@ApiBearerAuth('access_token')
 @ApiTags('Work Parts')
 @Controller('workparts')
 export class WorkPartsController {
   constructor(private workPartsService: WorkPartsService) {}
 
+  @Public()
   @Get()
   async getAll(@Query() params: FindWorkPartsByWorkIdDto) {
     const processedParams: FindWorkPartsByWorkIdProcessedDto = {
@@ -37,11 +38,13 @@ export class WorkPartsController {
     return await this.workPartsService.getAll(processedParams);
   }
 
+  @Public()
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.workPartsService.getById(id);
   }
 
+  @ApiBearerAuth('access_token')
   @Post()
   async create(@Request() req, @Body() data: CreateWorkPartDto) {
     const processedParams: CreateWorkPartProcessedDto = {
@@ -60,6 +63,7 @@ export class WorkPartsController {
     return await this.workPartsService.create(req.user.id, processedParams);
   }
 
+  @ApiBearerAuth('access_token')
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -69,6 +73,7 @@ export class WorkPartsController {
     return await this.workPartsService.update(id, data, req.user.id);
   }
 
+  @ApiBearerAuth('access_token')
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number, @Request() req) {
     return await this.workPartsService.delete(id, req.user.id);

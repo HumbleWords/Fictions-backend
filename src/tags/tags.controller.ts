@@ -25,15 +25,14 @@ import { TagsService } from './tags.service';
 import { Roles } from 'src/common/role.decorator';
 import { Role } from 'src/common/role.enum';
 
-@ApiBearerAuth('access_token')
-@ApiTags('Tags')
+@ApiTags('Теги')
 @Controller('tags')
 export class TagsController {
   constructor(private tagsService: TagsService) {}
 
   @Public()
   @ApiOperation({
-    summary: 'Get list of tags',
+    summary: 'Получить список тегов',
   })
   @Get()
   async getAll(@Query() params: FindAllTagsDto) {
@@ -51,9 +50,10 @@ export class TagsController {
     return await this.tagsService.getAll(processedParams);
   }
 
+  @ApiBearerAuth('access_token')
   @Roles(Role.Admin)
   @ApiOperation({
-    summary: 'Create tag',
+    summary: 'Создать тег',
   })
   @Post()
   async create(@Body() data: CreateTagDto) {
@@ -62,16 +62,17 @@ export class TagsController {
 
   @Public()
   @ApiOperation({
-    summary: 'Get tag by id',
+    summary: 'Получить тег по id',
   })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.tagsService.getById(id);
   }
 
+  @ApiBearerAuth('access_token')
   @Roles(Role.Admin)
   @ApiOperation({
-    summary: 'Update tag'
+    summary: 'Редактировать тег',
   })
   @Put(':id')
   async update(
@@ -81,9 +82,10 @@ export class TagsController {
     return await this.tagsService.update(id, data);
   }
 
+  @ApiBearerAuth('access_token')
   @Roles(Role.Admin)
   @ApiOperation({
-    summary: 'Delete tag'
+    summary: 'Удалить тег',
   })
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number) {

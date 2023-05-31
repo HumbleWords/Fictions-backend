@@ -17,24 +17,24 @@ import {
   FindAllUsersProcessedDto,
   UpdateUserDto,
 } from './users.dto';
-import { Public } from 'src/common/public.decorator';
-import { Roles } from 'src/common/role.decorator';
-import { Role } from 'src/common/role.enum';
+import { Public } from '../common/public.decorator';
+import { Roles } from '../common/role.decorator';
+import { Role } from '../common/role.enum';
 import {
   ApiBearerAuth,
+  ApiExcludeEndpoint,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger/dist/decorators';
 
-@ApiBearerAuth('access_token')
-@ApiTags('Users')
+@ApiTags('Пользователи')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Public()
   @ApiOperation({
-    summary: 'Get list of users',
+    summary: 'Получить список пользователей',
   })
   @Get()
   async getAll(
@@ -55,35 +55,38 @@ export class UsersController {
     return await this.usersService.getAll(processedParams);
   }
 
+  @ApiBearerAuth('access_token')
   @Roles(Role.Admin)
   @ApiOperation({
-    summary: 'Create new user',
+    summary: 'Создать нового пользователя',
   })
   @Post()
   async create(@Body() data: CreateUserDto) {
     return await this.usersService.create(data);
   }
 
-  @ApiOperation({
-    summary: 'Get current user info',
-  })
-  @Get('me')
-  async getMe(@Request() req) {
-    return await this.usersService.getById(req.user.id);
-  }
-
   @Public()
   @ApiOperation({
-    summary: 'Get user by id',
+    summary: 'Получить пользователя по id',
   })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.usersService.getById(id);
   }
 
+  @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Получить информацию о текущем пользователе',
+  })
+  @Get('me')
+  async getMe(@Request() req) {
+    return await this.usersService.getById(req.user.id);
+  }
+
+  @ApiBearerAuth('access_token')
   @Roles(Role.Admin)
   @ApiOperation({
-    summary: 'Update user info',
+    summary: 'Обновить информацию о пользователе',
   })
   @Put(':id')
   async update(
@@ -93,20 +96,22 @@ export class UsersController {
     return await this.usersService.update(id, data);
   }
 
-  @Roles(Role.Admin)
+  @ApiBearerAuth('access_token')
   @ApiOperation({
-    summary: 'Delete user',
-  })
-  @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    return await this.usersService.delete(id);
-  }
-
-  @ApiOperation({
-    summary: 'Update current user information',
+    summary: 'Обновить информацию о текущем пользователе',
   })
   @Put('me')
   async updateMe(@Request() req, @Body() data: UpdateUserDto) {
     return await this.usersService.update(req.user.id, data);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Roles(Role.Admin)
+  @ApiOperation({
+    summary: 'Удалить пользователя',
+  })
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return await this.usersService.delete(id);
   }
 }

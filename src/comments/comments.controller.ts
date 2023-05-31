@@ -21,15 +21,14 @@ import {
 } from './comments.dto';
 import { CommentsService } from './comments.service';
 
-@ApiBearerAuth('access_token')
-@ApiTags('Comments')
+@ApiTags('Комментарии')
 @Controller('comments')
 export class CommentsController {
   constructor(private commentsService: CommentsService) {}
 
   @Public()
   @ApiOperation({
-    summary: 'Get list of comments by workPartId',
+    summary: 'Получить список комментариев к части раборы по workPartId',
   })
   @Get()
   async getAll(@Query() params: FindAllCommentsDto) {
@@ -47,8 +46,9 @@ export class CommentsController {
     return await this.commentsService.getAll(processedParams);
   }
 
+  @ApiBearerAuth('access_token')
   @ApiOperation({
-    summary: 'Post new comment',
+    summary: 'Создать новый комментарий',
   })
   @Post()
   async create(@Request() req, @Body() data: CreateCommentDto) {
@@ -73,15 +73,16 @@ export class CommentsController {
 
   @Public()
   @ApiOperation({
-    summary: 'Get a comment by id',
+    summary: 'Получить комментарий по id',
   })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.commentsService.getById(id);
   }
 
+  @ApiBearerAuth('access_token')
   @ApiOperation({
-    summary: 'Update a comment',
+    summary: 'Редактировать комментарий',
   })
   @Put(':id')
   async update(
@@ -92,8 +93,9 @@ export class CommentsController {
     return await this.commentsService.update(id, data, req.user.id);
   }
 
+  @ApiBearerAuth('access_token')
   @ApiOperation({
-    summary: 'Delete a comment',
+    summary: 'Удалить комментарий',
   })
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number, @Request() req) {

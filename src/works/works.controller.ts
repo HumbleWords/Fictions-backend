@@ -24,7 +24,6 @@ import {
 } from './works.dto';
 import { WorksService } from './works.service';
 
-@ApiBearerAuth('access_token')
 @ApiTags('Works')
 @Controller('works')
 export class WorksController {
@@ -66,6 +65,7 @@ export class WorksController {
     return await this.worksService.getAll(processedParams);
   }
 
+  @ApiBearerAuth('access_token')
   @Post()
   async create(@Request() req, @Body() data: CreateWorkDto) {
     const processedParams: CreateWorkProcessedDto = {
@@ -89,6 +89,7 @@ export class WorksController {
     });
   }
 
+  @ApiBearerAuth('access_token')
   @Get('myworks')
   async getMyWorks(@Request() req, @Query() params: FindMyWorksDto) {
     const processedParams: FindMyWorksProcessedDto = {
@@ -120,6 +121,7 @@ export class WorksController {
     return await this.worksService.getById(id);
   }
 
+  @ApiBearerAuth('access_token')
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -144,6 +146,7 @@ export class WorksController {
     return await this.worksService.update(id, processedParams, req.user.id);
   }
 
+  @ApiBearerAuth('access_token')
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number, @Request() req) {
     return await this.worksService.delete(id, req.user.id);

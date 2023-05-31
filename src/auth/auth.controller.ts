@@ -5,7 +5,7 @@ import { Public } from 'src/common/public.decorator';
 import { LoginDto, RegisterDto } from './auth.dto';
 import { AuthService } from './auth.service';
 
-@ApiTags('Auth')
+@ApiTags('Аутентификация')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -13,7 +13,7 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @ApiOperation({
-    summary: 'Login to the system',
+    summary: 'Войти в систему',
   })
   @Post('login')
   async login(@Request() req, @Body() data: LoginDto) {
@@ -22,7 +22,7 @@ export class AuthController {
 
   @Public()
   @ApiOperation({
-    summary: 'Register a new user',
+    summary: 'Зарегистрироваться',
   })
   @Post('register')
   async register(@Body() body: RegisterDto) {

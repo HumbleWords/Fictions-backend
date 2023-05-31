@@ -25,15 +25,14 @@ import { FandomsService } from './fandoms.service';
 import { Roles } from 'src/common/role.decorator';
 import { Role } from 'src/common/role.enum';
 
-@ApiBearerAuth('access_token')
-@ApiTags('Fandoms')
+@ApiTags('Фандомы')
 @Controller('fandoms')
 export class FandomsController {
   constructor(private fandomsService: FandomsService) {}
 
   @Public()
   @ApiOperation({
-    summary: 'Get list of fandoms',
+    summary: 'Получить список фандомов',
   })
   @Get()
   async getAll(@Query() params: FindAllFandomsDto) {
@@ -51,9 +50,10 @@ export class FandomsController {
     return await this.fandomsService.getAll(processedParams);
   }
 
+  @ApiBearerAuth('access_token')
   @Roles(Role.Admin)
   @ApiOperation({
-    summary: 'Create fandom',
+    summary: 'Создать фандом',
   })
   @Post()
   async create(@Body() data: CreateFandomDto) {
@@ -62,16 +62,17 @@ export class FandomsController {
 
   @Public()
   @ApiOperation({
-    summary: 'Get fandom by id',
+    summary: 'Получить фандом по id',
   })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.fandomsService.getById(id);
   }
 
+  @ApiBearerAuth('access_token')
   @Roles(Role.Admin)
   @ApiOperation({
-    summary: 'Update fandom',
+    summary: 'Редактировать фандом',
   })
   @Put(':id')
   async update(
@@ -81,9 +82,10 @@ export class FandomsController {
     return await this.fandomsService.update(id, data);
   }
 
+  @ApiBearerAuth('access_token')
   @Roles(Role.Admin)
   @ApiOperation({
-    summary: 'Delete fandom',
+    summary: 'Удалить фандом',
   })
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number) {
