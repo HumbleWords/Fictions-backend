@@ -40,6 +40,13 @@ export class AuthService {
       password: hashedPassword,
     });
     if (!user) return { message: 'User already exists' };
-    return user;
+    const payload = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+    };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }

@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
+import { PrismaService } from '../prisma.service';
 import { Prisma, User } from '@prisma/client';
-import { PublicUserInfo } from './users.dto';
+import { PublicUserInfo, UserJwtSignedModel } from './users.dto';
 
 @Injectable()
 export class UsersService {
@@ -13,7 +17,7 @@ export class UsersService {
     where: Prisma.UserWhereInput;
     orderBy: Prisma.Enumerable<Prisma.UserOrderByWithRelationInput>;
   }): Promise<PublicUserInfo[]> {
-    console.log(JSON.stringify({params}))
+    console.log(JSON.stringify({ params }));
     const users = this.prisma.user.findMany({
       ...params,
       select: {
@@ -53,8 +57,33 @@ export class UsersService {
     return user;
   }
 
-  async create(data: Prisma.UserCreateInput): Promise<User> {
-    const user = this.prisma.user.create({ data });
+  async create(data: Prisma.UserCreateInput): Promise<UserJwtSignedModel> {
+    const userExistsWithEmail = this.prisma.user.findUnique({
+      where: {
+        email: data.email,
+      },
+    });
+    if (await userExistsWithEmail) {
+      throw new ConflictException(
+        'Пользователь с таким адресом почты уже существует',
+      );
+    }
+    const userExistsWithUsername = this.prisma.user.findUnique({
+      where: {
+        username: data.username,
+      },
+    });
+    if (await userExistsWithUsername) {
+      throw new ConflictException('Пользователь с таким именем уже существует');
+    }
+    const user = this.prisma.user.create({
+      data,
+      select: {
+        id: true,
+        username: true,
+        role: true,
+      },
+    });
     return user;
   }
 

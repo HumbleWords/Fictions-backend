@@ -12,7 +12,10 @@ import { WorkPartsModule } from './workparts/workparts.module';
 import { WorksModule } from './works/works.module';
 import { TransformInterceptor } from './common/transform.interceptor';
 import { ErrorsInterceptor } from './common/errors.interceptor';
-import { UnauthorizedExceptionFilter } from './common/exception.filter';
+import {
+  ConflictExceptionfilter,
+  UnauthorizedExceptionFilter,
+} from './common/exception.filter';
 
 @Module({
   imports: [
@@ -32,6 +35,7 @@ import { UnauthorizedExceptionFilter } from './common/exception.filter';
     { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_PIPE, useValue: new ValidationPipe({ transform: true }) },
     { provide: APP_FILTER, useClass: UnauthorizedExceptionFilter },
+    { provide: APP_FILTER, useClass: ConflictExceptionfilter },
   ],
 })
 export class AppModule {}

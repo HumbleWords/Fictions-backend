@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsInt, IsEmail, IsString, Length, Matches } from 'class-validator';
-import { OrderByEnum } from 'src/common/common.dto';
-import { Role } from 'src/common/role.enum';
+import { OrderByEnum } from '../common/common.dto';
+import { Role } from '../common/role.enum';
 
 export class FindAllUsersDto {
   @ApiProperty({ default: 0 })
@@ -79,4 +79,10 @@ export class PublicUserInfo {
   id: number;
   @ApiProperty()
   username: string;
+}
+
+export class UserJwtSignedModel {
+  id: number;
+  username: string;
+  role: string;
 }
