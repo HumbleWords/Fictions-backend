@@ -65,15 +65,6 @@ export class UsersController {
     return await this.usersService.create(data);
   }
 
-  @Public()
-  @ApiOperation({
-    summary: 'Получить пользователя по id',
-  })
-  @Get(':id')
-  async getById(@Param('id', ParseIntPipe) id: number) {
-    return await this.usersService.getById(id);
-  }
-
   @ApiBearerAuth('access_token')
   @ApiOperation({
     summary: 'Получить информацию о текущем пользователе',
@@ -81,6 +72,15 @@ export class UsersController {
   @Get('me')
   async getMe(@Request() req) {
     return await this.usersService.getById(req.user.id);
+  }
+
+  @Public()
+  @ApiOperation({
+    summary: 'Получить пользователя по id',
+  })
+  @Get(':id')
+  async getById(@Param('id', ParseIntPipe) id: number) {
+    return await this.usersService.getById(id);
   }
 
   @ApiBearerAuth('access_token')

@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import {
   CreateUserDto,
   FindAllUsersDto,
+  PublicDeletedUserInfo,
   PublicUserInfo,
   UserJwtSignedModel,
 } from './users.dto';
@@ -155,6 +156,45 @@ describe('UsersController', () => {
     });
     it('should not return a user', async () => {
       expect(await usersController.getById(-1)).toBeNull();
+    });
+  });
+
+  describe('update', () => {
+    it('should return new user info', async () => {
+      const oldUserInfo: PublicUserInfo = {
+        id: 1,
+        username: 'oldUserName',
+      };
+
+      const result: PublicUserInfo = {
+        id: 1,
+        username: 'newUserName',
+      };
+      jest.spyOn(usersService, 'update').mockImplementation(async () => result);
+
+      const user = await usersController.update(1, {
+        username: 'newUserInfo',
+        email: 'old@email.com',
+        password: 'oldPassword@123',
+        birthdate: '2001-01-01',
+      });
+
+      expect(user).toBe(result);
+      expect(user).not.toBe(oldUserInfo);
+    });
+  });
+
+  describe('delete', () => {
+    it('should return a user with deletedAt property', async () => {
+      const result: PublicDeletedUserInfo = {
+        id: 1,
+        username: 'newUserName',
+        deletedAt: new Date(),
+      };
+
+      jest.spyOn(usersService, 'delete').mockImplementation(async () => result);
+
+      expect(await usersController.delete(1)).toBe(result);
     });
   });
 });

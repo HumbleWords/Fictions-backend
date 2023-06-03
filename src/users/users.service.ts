@@ -5,7 +5,11 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma, User } from '@prisma/client';
-import { PublicUserInfo, UserJwtSignedModel } from './users.dto';
+import {
+  PublicDeletedUserInfo,
+  PublicUserInfo,
+  UserJwtSignedModel,
+} from './users.dto';
 
 @Injectable()
 export class UsersService {
@@ -87,15 +91,30 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, data: Prisma.UserUpdateInput): Promise<User> {
-    const user = this.prisma.user.update({ where: { id }, data });
+  async update(
+    id: number,
+    data: Prisma.UserUpdateInput,
+  ): Promise<PublicUserInfo> {
+    const user = this.prisma.user.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        username: true,
+      },
+    });
     return user;
   }
 
-  async delete(id: number): Promise<User> {
+  async delete(id: number): Promise<PublicDeletedUserInfo> {
     const user = this.prisma.user.update({
       where: { id },
       data: { deletedAt: new Date() },
+      select: {
+        id: true,
+        username: true,
+        deletedAt: true,
+      },
     });
     return user;
   }

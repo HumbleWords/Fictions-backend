@@ -71,7 +71,7 @@ export class UpdateUserDto {
   @ApiProperty()
   birthdate: string;
   @ApiProperty({ enum: Role, default: Role.User })
-  role: Role;
+  role?: Role;
 }
 
 export class PublicUserInfo {
@@ -79,6 +79,14 @@ export class PublicUserInfo {
   id: number;
   @ApiProperty()
   username: string;
+}
+
+export class PublicDeletedUserInfo {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  username: string;
+  deletedAt: Date;
 }
 
 export class UserJwtSignedModel {
