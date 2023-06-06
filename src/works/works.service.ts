@@ -45,6 +45,33 @@ export class WorksService {
     return works;
   }
 
+  async getMyWorkById(id: number, userId: number) {
+    const work = this.prisma.work.findUnique({
+      where: { id },
+      include: {
+        tags: true,
+        fandoms: true,
+        parts: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            note: true,
+            text: true,
+            status: true,
+          },
+          orderBy: {
+            order: 'asc',
+          },
+        },
+      },
+    });
+    if (!((await work).authorId === userId)) {
+      return null;
+    }
+    return work;
+  }
+
   async getById(id: number): Promise<Work> {
     const work = this.prisma.work.findUnique({
       where: { id },
@@ -55,6 +82,9 @@ export class WorksService {
           select: {
             id: true,
             title: true,
+            description: true,
+            note: true,
+            text: true,
           },
           orderBy: {
             order: 'asc',
@@ -65,6 +95,10 @@ export class WorksService {
         },
       },
     });
+    console.log(await work);
+    if (!(await work)) {
+      return null;
+    }
     if (!((await work).status === 'PUBLISHED')) {
       return null;
     }

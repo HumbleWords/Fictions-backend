@@ -22,10 +22,10 @@ export class ErrorsInterceptor implements NestInterceptor {
               success: false,
               statusCode: err?.status,
               message:
-                err?.response.message ||
+                err?.response?.message ||
                 err?.message ||
                 'Something went wrong...',
-              error: err?.response.error,
+              error: err?.response?.error,
             },
             err?.status || HttpStatus.BAD_GATEWAY,
           );

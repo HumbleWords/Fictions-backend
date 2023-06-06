@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Prisma } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { IsInt } from 'class-validator';
 import {
@@ -57,6 +58,8 @@ export class FindAllWorksDto {
   tags: string | null;
   @ApiProperty({ type: String, default: '', required: false })
   fandoms: string | null;
+  @ApiProperty({ enum: ['title', 'createdAt', 'updatedAt'] })
+  orderParam: 'title' | 'createdAt' | 'updatedAt';
   @ApiProperty({ enum: OrderByEnum })
   orderBy: OrderByEnum;
 }
@@ -80,9 +83,7 @@ export class FindAllWorksProcessedDto {
       };
     };
   };
-  orderBy: {
-    title: 'asc' | 'desc';
-  };
+  orderBy: Prisma.WorkPartOrderByWithRelationInput;
 }
 
 export class FindMyWorksDto {

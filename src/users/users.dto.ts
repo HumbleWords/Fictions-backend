@@ -81,6 +81,17 @@ export class PublicUserInfo {
   username: string;
 }
 
+export class PrivateUserInfo {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  username: string;
+  @ApiProperty()
+  email: string;
+  @ApiProperty()
+  birthdate: string;
+}
+
 export class PublicDeletedUserInfo {
   @ApiProperty()
   id: number;

@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../prisma.service';
 import { Prisma, User } from '@prisma/client';
 import {
+  PrivateUserInfo,
   PublicDeletedUserInfo,
   PublicUserInfo,
   UserJwtSignedModel,
@@ -40,6 +41,21 @@ export class UsersService {
       select: {
         id: true,
         username: true,
+      },
+    });
+    return user;
+  }
+
+  async getMe(userId: number): Promise<PrivateUserInfo> {
+    const user = this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        birthdate: true,
       },
     });
     return user;
