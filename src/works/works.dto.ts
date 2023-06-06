@@ -74,12 +74,12 @@ export class FindAllWorksProcessedDto {
     };
     tags: {
       some: {
-        name: string | null;
+        name: { contains: string; mode: 'insensitive' };
       };
     };
     fandoms: {
       some: {
-        name: string | null;
+        name: { contains: string; mode: 'insensitive' };
       };
     };
   };
@@ -112,12 +112,12 @@ export class FindMyWorksProcessedDto {
     title: string | null;
     tags: {
       some: {
-        name: string | undefined;
+        name: { contains: string; mode: 'insensitive' };
       };
     };
     fandoms: {
       some: {
-        name: string | undefined;
+        name: { contains: string; mode: 'insensitive' };
       };
     };
   };

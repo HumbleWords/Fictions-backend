@@ -53,20 +53,22 @@ export class WorksController {
               username: params.author,
             }
           : undefined,
-        tags: params.tags
-          ? {
-              some: {
-                name: params.tags,
-              },
-            }
-          : undefined,
-        fandoms: params.fandoms
-          ? {
-              some: {
-                name: params.fandoms,
-              },
-            }
-          : undefined,
+        tags: {
+          some: {
+            name: {
+              contains: params.tags,
+              mode: 'insensitive',
+            },
+          },
+        },
+        fandoms: {
+          some: {
+            name: {
+              contains: params.fandoms,
+              mode: 'insensitive',
+            },
+          },
+        },
       },
       orderBy: orderParam,
     };
@@ -108,12 +110,18 @@ export class WorksController {
         title: params.title,
         tags: {
           some: {
-            name: params.tags,
+            name: {
+              contains: params.tags,
+              mode: 'insensitive',
+            },
           },
         },
         fandoms: {
           some: {
-            name: params.fandoms,
+            name: {
+              contains: params.fandoms,
+              mode: 'insensitive',
+            },
           },
         },
       },
