@@ -71,7 +71,7 @@ export class UsersController {
   })
   @Get('me')
   async getMe(@Request() req) {
-    return await this.usersService.getById(req.user.id);
+    return await this.usersService.getMe(req.user.id);
   }
 
   @Public()
