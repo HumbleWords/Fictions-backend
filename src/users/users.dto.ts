@@ -90,6 +90,8 @@ export class PrivateUserInfo {
   email: string;
   @ApiProperty()
   birthdate: string;
+  @ApiProperty()
+  role: "USER" | "ADMIN";
 }
 
 export class PublicDeletedUserInfo {

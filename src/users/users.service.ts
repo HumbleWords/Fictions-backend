@@ -56,6 +56,7 @@ export class UsersService {
         username: true,
         email: true,
         birthdate: true,
+        role: true,
       },
     });
     return user;
