@@ -13,15 +13,18 @@ export class WorksService {
     orderBy: Prisma.Enumerable<Prisma.WorkOrderByWithRelationInput>;
   }): Promise<Work[]> {
     params.where = { ...params.where, status: 'PUBLISHED' };
-    console.log(JSON.stringify({ params }));
     const works = this.prisma.work.findMany({
       ...params,
       include: {
         tags: true,
         fandoms: true,
+        author: {
+          select: {
+            username: true,
+          },
+        },
       },
     });
-    console.log(await works);
     return works;
   }
 
@@ -40,6 +43,11 @@ export class WorksService {
       include: {
         tags: true,
         fandoms: true,
+        author: {
+          select: {
+            username: true,
+          },
+        },
       },
     });
     return works;
@@ -64,8 +72,16 @@ export class WorksService {
             order: 'asc',
           },
         },
+        author: {
+          select: {
+            username: true,
+          },
+        },
       },
     });
+    if (!(await work)) {
+      return null;
+    }
     if (!((await work).authorId === userId)) {
       return null;
     }
@@ -93,9 +109,13 @@ export class WorksService {
             status: 'PUBLISHED',
           },
         },
+        author: {
+          select: {
+            username: true,
+          },
+        },
       },
     });
-    console.log(await work);
     if (!(await work)) {
       return null;
     }
