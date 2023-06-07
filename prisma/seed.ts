@@ -20,6 +20,11 @@ const REG_USER_DATA: Prisma.UserCreateInput = {
 };
 
 const main = async () => {
+  await prisma.comment.deleteMany();
+  await prisma.workPart.deleteMany();
+  await prisma.work.deleteMany();
+  await prisma.fandom.deleteMany();
+  await prisma.tag.deleteMany();
   const users_deleted = await prisma.user.deleteMany();
   console.log({ users_deleted });
 
