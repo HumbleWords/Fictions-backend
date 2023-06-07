@@ -101,6 +101,8 @@ export class FindMyWorksDto {
   tags: string | undefined;
   @ApiProperty({ type: String, default: '', required: false })
   fandoms: string | undefined;
+  @ApiProperty({ enum: ['title', 'createdAt', 'updatedAt'] })
+  orderParam: 'title' | 'createdAt' | 'updatedAt';
   @ApiProperty({ enum: OrderByEnum })
   orderBy: OrderByEnum;
 }
@@ -121,9 +123,7 @@ export class FindMyWorksProcessedDto {
       };
     };
   };
-  orderBy: {
-    title: 'asc' | 'desc';
-  };
+  orderBy: Prisma.WorkPartOrderByWithRelationInput;
 }
 
 export class CreateWorkProcessedDto {

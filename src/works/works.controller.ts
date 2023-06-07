@@ -41,7 +41,7 @@ export class WorksController {
       case 'updatedAt':
         orderParam = { updatedAt: params.orderBy };
       default:
-        orderParam = { createdAt: params.orderBy };
+        orderParam = { updatedAt: params.orderBy };
     }
     const processedParams: FindAllWorksProcessedDto = {
       skip: params.skip,
@@ -103,6 +103,17 @@ export class WorksController {
   @ApiBearerAuth('access_token')
   @Get('myworks')
   async getMyWorks(@Request() req, @Query() params: FindMyWorksDto) {
+    let orderParam = {};
+    switch (params.orderParam) {
+      case 'title':
+        orderParam = { title: params.orderBy };
+      case 'createdAt':
+        orderParam = { createdAt: params.orderBy };
+      case 'updatedAt':
+        orderParam = { updatedAt: params.orderBy };
+      default:
+        orderParam = { updatedAt: params.orderBy };
+    }
     const processedParams: FindMyWorksProcessedDto = {
       skip: params.skip,
       take: params.take,
@@ -125,9 +136,7 @@ export class WorksController {
           },
         },
       },
-      orderBy: {
-        title: params.orderBy,
-      },
+      orderBy: orderParam,
     };
     return await this.worksService.getMyWorks(processedParams, req.user.id);
   }
