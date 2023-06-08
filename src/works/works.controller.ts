@@ -10,7 +10,11 @@ import {
   Request,
   Query,
 } from '@nestjs/common/decorators';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger/dist/decorators';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger/dist/decorators';
 import { Public } from 'src/common/public.decorator';
 import {
   CreateWorkDto,
@@ -24,12 +28,15 @@ import {
 } from './works.dto';
 import { WorksService } from './works.service';
 
-@ApiTags('Works')
+@ApiTags('Работы')
 @Controller('works')
 export class WorksController {
   constructor(private worksService: WorksService) {}
 
   @Public()
+  @ApiOperation({
+    summary: 'Получить список опубликованных работ',
+  })
   @Get()
   async getAll(@Query() params: FindAllWorksDto) {
     let orderParam = {};
@@ -77,6 +84,9 @@ export class WorksController {
   }
 
   @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Создать новую работу',
+  })
   @Post()
   async create(@Request() req, @Body() data: CreateWorkDto) {
     const processedParams: CreateWorkProcessedDto = {
@@ -101,6 +111,9 @@ export class WorksController {
   }
 
   @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Получить список моих работ',
+  })
   @Get('myworks')
   async getMyWorks(@Request() req, @Query() params: FindMyWorksDto) {
     let orderParam = {};
@@ -142,18 +155,27 @@ export class WorksController {
   }
 
   @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Получить мою работу по id',
+  })
   @Get('myworks/:id')
   async getMyWorkById(@Request() req, @Param('id', ParseIntPipe) id: number) {
     return await this.worksService.getMyWorkById(id, req.user.id);
   }
 
   @Public()
+  @ApiOperation({
+    summary: 'Получить работу по id',
+  })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.worksService.getById(id);
   }
 
   @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Обновить информацию о работе',
+  })
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -179,6 +201,9 @@ export class WorksController {
   }
 
   @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Удалить работу',
+  })
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number, @Request() req) {
     return await this.worksService.delete(id, req.user.id);

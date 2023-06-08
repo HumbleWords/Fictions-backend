@@ -10,7 +10,11 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger/dist/decorators';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger/dist/decorators';
 import {
   FindAllWorkPartsDto,
   CreateWorkPartDto,
@@ -22,12 +26,15 @@ import {
 import { WorkPartsService } from './workparts.service';
 import { Public } from 'src/common/public.decorator';
 
-@ApiTags('Work Parts')
+@ApiTags('Части работ')
 @Controller('workparts')
 export class WorkPartsController {
   constructor(private workPartsService: WorkPartsService) {}
 
   @Public()
+  @ApiOperation({
+    summary: 'Получить все части работы по workId',
+  })
   @Get()
   async getAll(@Query() params: FindWorkPartsByWorkIdDto) {
     const processedParams: FindWorkPartsByWorkIdProcessedDto = {
@@ -39,12 +46,18 @@ export class WorkPartsController {
   }
 
   @Public()
+  @ApiOperation({
+    summary: 'Получить часть работы по id',
+  })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.workPartsService.getById(id);
   }
 
   @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Создать новую часть работы',
+  })
   @Post()
   async create(@Request() req, @Body() data: CreateWorkPartDto) {
     const processedParams: CreateWorkPartProcessedDto = {
@@ -64,6 +77,9 @@ export class WorkPartsController {
   }
 
   @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Обновить часть работы',
+  })
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -74,6 +90,9 @@ export class WorkPartsController {
   }
 
   @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Удалить часть работы',
+  })
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number, @Request() req) {
     return await this.workPartsService.delete(id, req.user.id);
