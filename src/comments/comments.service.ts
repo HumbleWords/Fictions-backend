@@ -12,13 +12,36 @@ export class CommentsService {
     where: Prisma.CommentWhereInput;
     orderBy: Prisma.Enumerable<Prisma.CommentOrderByWithRelationInput>;
   }): Promise<Comment[]> {
-    const comments = this.prisma.comment.findMany({ ...params });
+    const comments = this.prisma.comment.findMany({
+      ...params,
+      include: { user: { select: { username: true } } },
+    });
     return comments;
   }
 
   async getById(id: number): Promise<Comment> {
-    const comment = this.prisma.comment.findUnique({ where: { id } });
+    const comment = this.prisma.comment.findUnique({
+      where: { id },
+      include: { user: { select: { username: true } } },
+    });
     return comment;
+  }
+
+  async getByWorkId(workId: number): Promise<Comment[]> {
+    const comments = this.prisma.comment.findMany({
+      where: {
+        workPart: {
+          is: {
+            workId,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+      include: { user: { select: { username: true } } },
+    });
+    return comments;
   }
 
   async create(data: Prisma.CommentCreateInput): Promise<Comment> {
@@ -26,7 +49,11 @@ export class CommentsService {
     return comment;
   }
 
-  async update(id: number, data: Prisma.CommentUpdateInput, userId): Promise<Comment> {
+  async update(
+    id: number,
+    data: Prisma.CommentUpdateInput,
+    userId,
+  ): Promise<Comment> {
     const commentCheck = await this.prisma.comment.findUnique({
       where: { id },
     });

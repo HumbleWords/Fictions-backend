@@ -71,6 +71,11 @@ export class CommentsController {
     return await this.commentsService.create(processedParams);
   }
 
+  @Get('work/:id')
+  async getByWorkId(@Param('id', ParseIntPipe) workId: number) {
+    return await this.commentsService.getByWorkId(workId);
+  }
+
   @Public()
   @ApiOperation({
     summary: 'Получить комментарий по id',
