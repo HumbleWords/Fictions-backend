@@ -40,16 +40,12 @@ export class WorksController {
   @Get()
   async getAll(@Query() params: FindAllWorksDto) {
     let orderParam = {};
-    switch (params.orderParam) {
-      case 'title':
-        orderParam = { title: params.orderBy };
-      case 'createdAt':
-        orderParam = { createdAt: params.orderBy };
-      case 'updatedAt':
-        orderParam = { updatedAt: params.orderBy };
-      default:
-        orderParam = { updatedAt: params.orderBy };
-    }
+    if (params.orderParam === 'title') orderParam = { title: params.orderBy };
+    if (params.orderParam === 'createdAt')
+      orderParam = { createdAt: params.orderBy };
+    if (params.orderParam === 'updatedAt')
+      orderParam = { updatedAt: params.orderBy };
+
     const processedParams: FindAllWorksProcessedDto = {
       skip: params.skip,
       take: params.take,
@@ -80,7 +76,7 @@ export class WorksController {
       orderBy: orderParam,
     };
 
-    return await this.worksService.getAll(processedParams);
+    return await this.worksService.getAll(processedParams, params.search);
   }
 
   @ApiBearerAuth('access_token')
@@ -104,6 +100,7 @@ export class WorksController {
         connect: data.fandoms,
       },
     };
+
     return await this.worksService.create({
       author: { connect: { id: req.user.id } },
       ...processedParams,
@@ -117,16 +114,12 @@ export class WorksController {
   @Get('myworks')
   async getMyWorks(@Request() req, @Query() params: FindMyWorksDto) {
     let orderParam = {};
-    switch (params.orderParam) {
-      case 'title':
-        orderParam = { title: params.orderBy };
-      case 'createdAt':
-        orderParam = { createdAt: params.orderBy };
-      case 'updatedAt':
-        orderParam = { updatedAt: params.orderBy };
-      default:
-        orderParam = { updatedAt: params.orderBy };
-    }
+    if (params.orderParam === 'title') orderParam = { title: params.orderBy };
+    if (params.orderParam === 'createdAt')
+      orderParam = { createdAt: params.orderBy };
+    if (params.orderParam === 'updatedAt')
+      orderParam = { updatedAt: params.orderBy };
+
     const processedParams: FindMyWorksProcessedDto = {
       skip: params.skip,
       take: params.take,
@@ -151,7 +144,12 @@ export class WorksController {
       },
       orderBy: orderParam,
     };
-    return await this.worksService.getMyWorks(processedParams, req.user.id);
+
+    return await this.worksService.getMyWorks(
+      processedParams,
+      req.user.id,
+      params.search,
+    );
   }
 
   @ApiBearerAuth('access_token')
@@ -163,6 +161,56 @@ export class WorksController {
     return await this.worksService.getMyWorkById(id, req.user.id);
   }
 
+  @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Получить мои избранные работы',
+  })
+  @Get('favorites')
+  async getFavoriteWorks(@Request() req, @Query() params: FindAllWorksDto) {
+    let orderParam = {};
+    if (params.orderParam === 'title') orderParam = { title: params.orderBy };
+    if (params.orderParam === 'createdAt')
+      orderParam = { createdAt: params.orderBy };
+    if (params.orderParam === 'updatedAt')
+      orderParam = { updatedAt: params.orderBy };
+
+    const processedParams: FindAllWorksProcessedDto = {
+      skip: params.skip,
+      take: params.take,
+      where: {
+        title: params.title ? params.title : undefined,
+        author: params.author
+          ? {
+              username: params.author,
+            }
+          : undefined,
+        tags: {
+          some: {
+            name: {
+              contains: params.tags,
+              mode: 'insensitive',
+            },
+          },
+        },
+        fandoms: {
+          some: {
+            name: {
+              contains: params.fandoms,
+              mode: 'insensitive',
+            },
+          },
+        },
+      },
+      orderBy: orderParam,
+    };
+
+    return await this.worksService.getFavoriteWorks(
+      processedParams,
+      req.user.id,
+      params.search,
+    );
+  }
+
   @Public()
   @ApiOperation({
     summary: 'Получить работу по id',
@@ -170,6 +218,27 @@ export class WorksController {
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.worksService.getById(id);
+  }
+
+  @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Добавить работу в избранное',
+  })
+  @Put(':id/addtofavorites')
+  async addToFavorite(@Request() req, @Param('id', ParseIntPipe) id: number) {
+    return await this.worksService.addToFavorites(id, req.user.id);
+  }
+
+  @ApiBearerAuth('access_token')
+  @ApiOperation({
+    summary: 'Удалить работу из избранного',
+  })
+  @Put(':id/removefromfavorites')
+  async removeFromFavorite(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return await this.worksService.removeFromFavorites(id, req.user.id);
   }
 
   @ApiBearerAuth('access_token')
@@ -197,6 +266,7 @@ export class WorksController {
         connect: data.fandoms,
       },
     };
+
     return await this.worksService.update(id, processedParams, req.user.id);
   }
 

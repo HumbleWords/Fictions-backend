@@ -62,6 +62,8 @@ export class FindAllWorksDto {
   orderParam: 'title' | 'createdAt' | 'updatedAt';
   @ApiProperty({ enum: OrderByEnum })
   orderBy: OrderByEnum;
+  @ApiProperty({ default: '' })
+  search: string | null;
 }
 
 export class FindAllWorksProcessedDto {
@@ -105,6 +107,8 @@ export class FindMyWorksDto {
   orderParam: 'title' | 'createdAt' | 'updatedAt';
   @ApiProperty({ enum: OrderByEnum })
   orderBy: OrderByEnum;
+  @ApiProperty({ default: '' })
+  search: string | null;
 }
 
 export class FindMyWorksProcessedDto {

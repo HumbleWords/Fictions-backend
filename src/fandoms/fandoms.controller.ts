@@ -8,6 +8,7 @@ import {
   Put,
   Post,
   Query,
+  Request,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -67,6 +68,21 @@ export class FandomsController {
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.fandomsService.getById(id);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Put(':id/addtofavorites')
+  async addToFavorites(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    return await this.fandomsService.addToFavorites(id, req.user.id);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Put(':id/removefromfavorites')
+  async removeFromFavorites(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+  ) {
+    return await this.fandomsService.removeFromFavorites(id, req.user.id);
   }
 
   @ApiBearerAuth('access_token')

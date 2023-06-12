@@ -8,6 +8,7 @@ import {
   Put,
   Post,
   Query,
+  Request,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -67,6 +68,21 @@ export class TagsController {
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.tagsService.getById(id);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Put(':id/addtofavorites')
+  async addToFavorites(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    return await this.tagsService.addToFavorites(id, req.user.id);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Put(':id/removefromfavorites')
+  async removeFromFavorites(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+  ) {
+    return await this.tagsService.removeFromFavorites(id, req.user.id);
   }
 
   @ApiBearerAuth('access_token')

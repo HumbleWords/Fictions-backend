@@ -6,13 +6,49 @@ import { Prisma, Work } from '@prisma/client';
 export class WorksService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll(params: {
-    skip: number;
-    take: number;
-    where: Prisma.WorkWhereInput;
-    orderBy: Prisma.Enumerable<Prisma.WorkOrderByWithRelationInput>;
-  }): Promise<Work[]> {
-    params.where = { ...params.where, status: 'PUBLISHED' };
+  async getAll(
+    params: {
+      skip: number;
+      take: number;
+      where: Prisma.WorkWhereInput;
+      orderBy: Prisma.Enumerable<Prisma.WorkOrderByWithRelationInput>;
+    },
+    search: string,
+  ): Promise<Work[]> {
+    params.where = {
+      ...params.where,
+      status: 'PUBLISHED',
+    };
+
+    params.where =
+      search === 'null'
+        ? params.where
+        : {
+            ...params.where,
+            OR: [
+              {
+                title: { contains: search, mode: 'insensitive' },
+              },
+              {
+                tags: {
+                  some: {
+                    name: { contains: search, mode: 'insensitive' },
+                  },
+                },
+              },
+              {
+                fandoms: {
+                  some: {
+                    name: { contains: search, mode: 'insensitive' },
+                  },
+                },
+              },
+              {
+                description: { contains: search, mode: 'insensitive' },
+              },
+            ],
+          };
+
     const works = this.prisma.work.findMany({
       ...params,
       include: {
@@ -21,6 +57,25 @@ export class WorksService {
         author: {
           select: {
             username: true,
+          },
+        },
+        parts: {
+          select: {
+            _count: {
+              select: {
+                comments: {
+                  where: {
+                    parentId: null,
+                  },
+                },
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            favoritedBy: true,
+            parts: true,
           },
         },
       },
@@ -36,8 +91,39 @@ export class WorksService {
       orderBy: Prisma.Enumerable<Prisma.WorkOrderByWithRelationInput>;
     },
     userId: number,
+    search: string,
   ) {
     params.where = { ...params.where, authorId: userId };
+
+    params.where =
+      search === 'null'
+        ? params.where
+        : {
+            ...params.where,
+            OR: [
+              {
+                title: { contains: search, mode: 'insensitive' },
+              },
+              {
+                tags: {
+                  some: {
+                    name: { contains: search, mode: 'insensitive' },
+                  },
+                },
+              },
+              {
+                fandoms: {
+                  some: {
+                    name: { contains: search, mode: 'insensitive' },
+                  },
+                },
+              },
+              {
+                description: { contains: search, mode: 'insensitive' },
+              },
+            ],
+          };
+
     const works = this.prisma.work.findMany({
       ...params,
       include: {
@@ -46,6 +132,104 @@ export class WorksService {
         author: {
           select: {
             username: true,
+          },
+        },
+        parts: {
+          select: {
+            _count: {
+              select: {
+                comments: {
+                  where: {
+                    parentId: null,
+                  },
+                },
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            favoritedBy: true,
+            parts: true,
+          },
+        },
+      },
+    });
+    return works;
+  }
+
+  async getFavoriteWorks(
+    params: {
+      skip: number;
+      take: number;
+      where: Prisma.WorkWhereInput;
+      orderBy: Prisma.Enumerable<Prisma.WorkOrderByWithRelationInput>;
+    },
+    userId: number,
+    search: string,
+  ): Promise<Work[]> {
+    params.where = {
+      ...params.where,
+      status: 'PUBLISHED',
+      favoritedBy: { some: { id: userId } },
+    };
+
+    params.where =
+      search === 'null'
+        ? params.where
+        : {
+            ...params.where,
+            OR: [
+              {
+                title: { contains: search, mode: 'insensitive' },
+              },
+              {
+                tags: {
+                  some: {
+                    name: { contains: search, mode: 'insensitive' },
+                  },
+                },
+              },
+              {
+                fandoms: {
+                  some: {
+                    name: { contains: search, mode: 'insensitive' },
+                  },
+                },
+              },
+              {
+                description: { contains: search, mode: 'insensitive' },
+              },
+            ],
+          };
+
+    const works = this.prisma.work.findMany({
+      ...params,
+      include: {
+        tags: true,
+        fandoms: true,
+        author: {
+          select: {
+            username: true,
+          },
+        },
+        parts: {
+          select: {
+            _count: {
+              select: {
+                comments: {
+                  where: {
+                    parentId: null,
+                  },
+                },
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            favoritedBy: true,
+            parts: true,
           },
         },
       },
@@ -67,6 +251,16 @@ export class WorksService {
             note: true,
             text: true,
             status: true,
+            order: true,
+            _count: {
+              select: {
+                comments: {
+                  where: {
+                    parentId: null,
+                  },
+                },
+              },
+            },
           },
           orderBy: {
             order: 'asc',
@@ -75,6 +269,12 @@ export class WorksService {
         author: {
           select: {
             username: true,
+          },
+        },
+        _count: {
+          select: {
+            favoritedBy: true,
+            parts: true,
           },
         },
       },
@@ -101,6 +301,16 @@ export class WorksService {
             description: true,
             note: true,
             text: true,
+            order: true,
+            _count: {
+              select: {
+                comments: {
+                  where: {
+                    parentId: null,
+                  },
+                },
+              },
+            },
           },
           orderBy: {
             order: 'asc',
@@ -112,6 +322,12 @@ export class WorksService {
         author: {
           select: {
             username: true,
+          },
+        },
+        _count: {
+          select: {
+            favoritedBy: true,
+            parts: true,
           },
         },
       },
@@ -153,6 +369,42 @@ export class WorksService {
       throw new ForbiddenException();
     }
     const work = this.prisma.work.delete({ where: { id } });
+    return work;
+  }
+
+  async addToFavorites(id: number, userId: number) {
+    const work = await this.prisma.work.update({
+      where: {
+        id: id,
+      },
+      data: {
+        favoritedBy: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+      select: { id: true },
+    });
+
+    return work;
+  }
+
+  async removeFromFavorites(id: number, userId: number) {
+    const work = await this.prisma.work.update({
+      where: {
+        id: id,
+      },
+      data: {
+        favoritedBy: {
+          disconnect: {
+            id: userId,
+          },
+        },
+      },
+      select: { id: true },
+    });
+
     return work;
   }
 }
