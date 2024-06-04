@@ -1,0 +1,150 @@
+datasource db {
+    provider = "postgres"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["filteredRelationCount"]
+}
+
+model User {
+    id        Int       @id @default(autoincrement())
+    username  String    @unique
+    email     String    @unique
+    password  String
+    birthdate String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    role Role @default(USER)
+
+    works Work[] @relation("AuthorWorks")
+
+    favoriteWorks   Work[]   @relation("FavoriteWorks")
+    favoriteTags    Tag[]    @relation("FavoriteTags")
+    favoriteFandoms Fandom[] @relation("FavoriteFandoms")
+
+    comments Comment[] @relation("CommentAuthor")
+}
+
+enum Role {
+    USER
+    ADMIN
+}
+
+model Work {
+    id          Int      @id @default(autoincrement())
+    title       String
+    description String
+    note        String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    status   WorkStatus @default(DRAFT)
+    lang     Lang       @default(ru)
+    rating   Rating?
+    category Category?
+
+    tags    Tag[]
+    fandoms Fandom[]
+
+    author   User @relation("AuthorWorks", fields: [authorId], references: [id])
+    authorId Int
+
+    favoritedBy User[] @relation("FavoriteWorks")
+
+    parts WorkPart[]
+}
+
+enum WorkStatus {
+    DRAFT
+    PUBLISHED
+    HIDDEN
+}
+
+enum Lang {
+    zh_ch
+    nl
+    en
+    fr
+    de
+    it
+    ja
+    no
+    pl
+    pt
+    ru
+    es
+    sv
+    vi
+}
+
+enum Rating {
+    G
+    PG
+    PG_13
+    R
+    NC_17
+}
+
+enum Category {
+    GEN
+    F_M
+    M_M
+    F_F
+    OTHER
+}
+
+model Tag {
+    id   Int    @id @default(autoincrement())
+    name String @unique
+
+    works Work[]
+    users User[] @relation("FavoriteTags")
+}
+
+model Fandom {
+    id   Int    @id @default(autoincrement())
+    name String @unique
+
+    works Work[]
+    users User[] @relation("FavoriteFandoms")
+}
+
+model WorkPart {
+    id          Int        @id @default(autoincrement())
+    title       String?
+    description String?
+    note        String?
+    text        String
+    status      WorkStatus @default(DRAFT)
+
+    workId Int
+    work   Work @relation(fields: [workId], references: [id])
+
+    order Int
+
+    comments Comment[] @relation("CommentsToWorkPart")
+
+    @@unique([workId, order])
+}
+
+model Comment {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    text      String
+
+    userId Int
+    user   User @relation("CommentAuthor", fields: [userId], references: [id])
+
+    workPartId Int
+    workPart   WorkPart @relation("CommentsToWorkPart", fields: [workPartId], references: [id])
+
+    parent   Comment? @relation("ParentComment", fields: [parentId], references: [id])
+    parentId Int?
+
+    children Comment[] @relation("ParentComment")
+}

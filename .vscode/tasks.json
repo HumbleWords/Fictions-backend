@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Configure Prisma",
+            "type": "shell",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Migrate DB",
+                "Seed DB"
+            ]
+        },
+        {
+            "label": "Migrate DB",
+            "type": "npm",
+            "script": "prisma:migrate"
+        },
+        {
+            "label": "Seed DB",
+            "type": "npm",
+            "script": "prisma:seed"
+        }
+    ]
+}
